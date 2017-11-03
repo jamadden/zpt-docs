@@ -27,6 +27,7 @@ behaviors that are not part of the standards.
    tales
    metal
    extensions
+   changelog
 
 ====================
  Indices and tables

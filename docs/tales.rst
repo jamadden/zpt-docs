@@ -1,6 +1,6 @@
-================
- TALES Referenc
-================
+=================
+ TALES Reference
+=================
 
 .. highlight:: html
 
@@ -9,6 +9,8 @@ expressions that supply TAL and METAL with data. TALES is *one* possible
 expression syntax for these languages, but they are not bound to this
 definition. Similarly, TALES could be used in a context having nothing to do
 with TAL or METAL.
+
+.. include:: impl-note.rst
 
 Introduction
 ============
@@ -38,13 +40,17 @@ The optional *type prefix* determines the semantics and syntax of the
 any number of expression types, with whatever syntax you like. It also
 determines which expression type is indicated by omitting the prefix.
 
-If you do not specify a prefix, Zope assumes that the expression is a *path*
-expression.
+
+.. admonition:: Implementation Note
+
+   If you do not specify a prefix, Zope and :mod:`zope.pagetemplate`
+   assumes that the expression is a *path* expression. Other
+   implementations may choose a different default.
 
 TALES Expression Types
 ----------------------
 
-These are the TALES expression types supported by Zope:
+These are the TALES expression types defined in the standard:
 
 path expressions
   locate a value by its path.
@@ -59,10 +65,12 @@ string expressions
 python expressions
   execute a Python expression
 
+.. _tales-builtin-names:
+
 Built-in Names
 --------------
 
-These are the names always available to TALES expressions in Zope:
+These are the names always available to TALES expressions:
 
 :nothing: special value used by to represent a *non-value* (e.g. void,
 		  None, Nil, NULL).
@@ -78,19 +86,27 @@ These are the names always available to TALES expressions in Zope:
 :CONTEXTS: the list of standard names (this list). This can be used to
 		   access a built-in variable that has been hidden by a local or global variable
 		   with the same name.
-:root: the system's top-most object: the Zope root folder.
-:context: the object to which the template is being applied.
-:container: The folder in which the template is located.
-:template: the template itself.
-:request: the publishing request object.
-:user: the authenticated user object.
-:modules: a collection through which Python modules and packages can be
+
+.. admonition:: Zope Implementation Note
+
+   The following names are optional names supported by
+   Zope, but are not required by the TALES standard.
+
+   :root: the system's top-most object: the Zope root folder.
+   :context: the object to which the template is being applied.
+   :container: The folder in which the template is located.
+   :template: the template itself.
+   :request: the publishing request object.
+   :user: the authenticated user object.
+   :modules: a collection through which Python modules and packages can be
 		  accessed. Only modules which are approved by the Zope security policy can be
 		  accessed.
 
-Note the names ``root``, ``context``, ``container``, ``template``, ``request``, ``user``, and
-``modules`` are optional names supported by Zope, but are not required by the
-TALES standard.
+   :mod:`zope.pagetemplate` provides ``template`` and ``modules`` by
+   default. :mod:`z3c.pt` tries to provide those in addition to
+   ``request`` and ``context``. For both system, other values may be
+   provided by the calling framework.
+
 
 TALES Exists expressions
 ========================
@@ -165,6 +181,8 @@ Using nocall expressions on a functions::
 This example defines a variable:: `join` which is bound to the `string.join`
 function.
 
+.. _tales-not-expression:
+
 TALES Not expressions
 =====================
 
@@ -186,6 +204,9 @@ supplied does not evaluate to a boolean value, *not* will issue a warning and
 *coerce* the expression's value into a boolean type based on the following
 rules:
 
+.. XXX: No such warning seems to be issued by any Python
+   implementation. Standard boolean conversion is done.
+
 1. the number 0 is *false*
 
 2. positive and negative numbers are *true*
@@ -194,14 +215,22 @@ rules:
 
 4. a non-empty string or other sequence is *true*
 
-5. a #. *non-value*#. (e.g. void, None, Nil, NULL, etc) is *false*
+5. a *non-value* (e.g. ``nothing``, void, None, Nil, NULL, etc) is *false*
 
 6. all other values are implementation-dependent.
 
 If no expression string is supplied, an error should be generated.
 
-Zope considers all objects not specifically listed above as *false* to be
-*true*.
+.. admonition:: Implementation Note
+
+   Python implementations use the ``bool`` type to check for truth.
+
+   Typically this means all objects not specifically listed above as *false* are
+   *true*, but individual object classes can customize that.
+
+   .. Previously,  the text about individual object classes was left
+	  off. Zope uses Chameleon to render nowadays and it doesn't
+	  hardcode a list of boolean objects.
 
 Examples
 --------
@@ -251,12 +280,18 @@ For example::
   request/name | string:Anonymous Coward
   context/?tname/macros/?mname
 
-When a path expression is evaluated, Zope attempts to traverse the path, from
-left to right, until it succeeds or runs out of paths segments. To traverse a
-path, it first fetches the object stored in the variable. For each path
-segment, it traverses from the current object to the sub-object named by the
-path segment. Sub-objects are located according to standard Zope traversal rules
-(via getattr, getitem, or traversal hooks).
+When a path expression is evaluated, the implementation attempts to
+traverse the path, from left to right, until it succeeds or runs out
+of paths segments. To traverse a path, it first fetches the object
+stored in the variable. For each path segment, it traverses from the
+current object to the sub-object named by the path segment.
+
+.. admonition:: Implementation Note
+
+   In Zope, :mod:`zope.pagetemplate` and :mod:`z3c.pt`, sub-objects
+   are located according to standard traversal rules (via
+   getattr, getitem, or traversal hooks). Note that traversal hooks
+   are used *last* and only if fetching an attribute failed.
 
 Once a path has been successfully traversed, the resulting object is the value
 of the expression. If it is a callable object, such as a method or template, it
@@ -322,9 +357,14 @@ Scripts and DTML variable expressions.
 Security Restrictions
 ~~~~~~~~~~~~~~~~~~~~~
 
+.. admonition:: Zope Implementation Note
+
+   This entire section applies to the Zope framework.
+   :mod:`zope.pagetemplate` also provides optional security
+   restrictions.
+
 Python expressions are subject to the same security restrictions as
 Python-based scripts. These restrictions include:
-
 
 access limits
   Python expressions are subject to Zope permission and role security
@@ -339,8 +379,10 @@ Despite these limits malicious Python expressions can cause problems.
 Built-in Functions
 ~~~~~~~~~~~~~~~~~~
 
-Python expressions have the same built-ins as Python-based Scripts with a few
-additions.
+
+.. XXX: The zope.pagetemplate/chameleon/Zope implementations actually
+   seem to give complete access to all builtins, without limitation.
+   Confirm this.
 
 These standard Python built-ins are available:
 
@@ -375,10 +417,17 @@ These standard Python built-ins are available:
 - str
 - tuple
 
+.. admonition:: Zope Implementation Note
+
+   Python expressions have the same built-ins as Python-based Scripts with a few
+   additions.
+
 The ``range`` and ``pow`` functions are available and work the same way they do in
 standard Python; however, they are limited to keep them from generating very
 large numbers and sequences. This limitation helps to avoid accidental long
 execution times.
+
+.. XXX: This restriction does not seem to be implemented anywhere.
 
 These functions are available in Python expressions, but not in Python-based
 scripts:
@@ -404,33 +453,35 @@ available. You can access modules either via path expressions (for example
 example ``modules["string"].join``). Here are the default modules:
 
 string
-  The standard `Python string module
-  <http://www.python.org/doc/current/lib/module-string.html>`_ Note: most of
-  the functions in the module are also available as methods on string objects.
-
+  The standard :mod:`Python string module <string>`
+  Note: most of the functions in the module are also available as methods on string objects.
 random
-  The standard
-  `Python random module
-  <http://www.python.org/doc/current/lib/module-random.html>`_
-
+  The standard :mod:`Python random module <random>`.
 math
-  The standard `Python math module
-  <http://www.python.org/doc/current/lib/module-math.html>`_ .
+  The standard :mod:`Python math module <math>`.
 
-sequence
-  A module with a powerful sorting function. See sequence for more information.
+.. admonition:: Zope Implementation Note
 
-Products.PythonScripts.standard
-  Various HTML formatting functions available in DTML. See
-  Products.PythonScripts.standard for more information.
+   Zope makes these additional modules available.
 
-ZTUtils
-  Batch processing facilities similar to those offered by ``dtml-in``. See
-  ZTUtils for more information.
+   sequence
+     A module with a powerful sorting function.
+   Products.PythonScripts.standard
+     Various HTML formatting functions available in DTML.
+   ZTUtils
+     Batch processing facilities similar to those offered by ``dtml-in``.
+   AccessControl
+     Security and access checking facilities. See AccessControl for more
+	 information.
 
-AccessControl
-  Security and access checking facilities. See AccessControl for more
-  information.
+.. admonition:: Implementation Note
+
+  Some implementations simply make the entire contents of
+  ``sys.modules`` available, importing new modules on demand. This
+  includes :mod:`zope.pagetemplate` and Zope. :mod:`z3c.pt` does not
+  import on demand, but does provide access to all currently imported
+  modules.
+
 
 Examples
 --------

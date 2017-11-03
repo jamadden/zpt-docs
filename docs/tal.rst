@@ -8,6 +8,8 @@ The *Template Attribute Language* (TAL) standard is an attribute language used
 to create dynamic templates. It allows elements of a document to be replaced,
 repeated, or omitted.
 
+.. include:: impl-note.rst
+
 Introduction
 ============
 
@@ -35,9 +37,9 @@ as::
 This is not a URL, but merely a unique identifier. Do not expect a browser to
 resolve it successfully.
 
-Zope does not require an XML namespace declaration when creating templates with
-a content-type of ``text/html``. However, it does require an XML namespace
-declaration for all other content-types.
+Implementations should not require an XML namespace declaration when
+creating templates with a content-type of ``text/html``. However, they
+should require an XML namespace declaration for all other content-types.
 
 TAL Statements
 --------------
@@ -201,8 +203,8 @@ otherwise the statement element is immediately removed from the template. For
 these purposes, the value *nothing* is false, and *default* has the same effect
 as returning a true value.
 
-*Note: Zope considers missing variables, None, zero, empty strings, and empty
-sequences false; all other values are true.*
+See :ref:`tales-not-expression` for information on what the default
+expression language considers to be *true* or *false*.
 
 Examples
 --------
@@ -337,10 +339,10 @@ omitting the surrounding start and end tags.
 If the expression evaluates to a *false* value, then normal processing of the
 element continues and the tags are not omitted. If the expression evaluates to
 a *true* value, or no expression is provided, the statement element is replaced
-with its contents.
+with its contents. The *default* value is considered to be true.
 
-Zope treats empty strings, empty sequences, zero, None, and *nothing* as false.
-All other values are considered true, including *default*.
+See :ref:`tales-not-expression` for information on what the default
+expression language considers to be *true* or *false*.
 
 Examples
 --------
@@ -510,8 +512,10 @@ them, you must call them, as in "python:repeat['item'].length()".
    or by appending it to the path from the repeat variable, as in
    "repeat/item/first/color".
 
-.. note:: ``first`` and ``last`` are Zope 2 extensions and are not
-		  available in other implementations.
+.. admonition:: Zope Implementation Note
+
+   ``first`` and ``last`` are Zope 2 extensions and are not
+   available in other implementations.
 
 Examples
 --------

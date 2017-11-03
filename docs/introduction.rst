@@ -35,11 +35,13 @@ disrupt the application.
 A Page Template is like a model of the pages that it will generate. In
 particular, it is parseable by most HTML tools.
 
+.. include:: impl-note.rst
+
 HTML Page Templates
 ===================
 
 *Page Templates* can operate in two modes: *HTML Mode* and *XML Mode*.
-Later in this chapter we will show you how to use the *XML Mode*, but in
+Later in this section we will show you how to use the *XML Mode*, but in
 most cases we want to use the *HTML Mode* which is also the default mode.
 For the *HTML Mode* the *Content-Type* has to be set to 'text/html'.
 
@@ -147,7 +149,7 @@ old alias of *context* and still used in many places.
 
 The small set of built-in variables such as *request* and *user* is
 described in the section entitled :doc:`AdvZPT`. You will also learn
-how to define your own variables in that chapter.
+how to define your own variables in that section.
 
 If the variable itself returns the value you want, you are done.
 Otherwise, you add a slash ('/') and the name of a sub-object or
@@ -158,10 +160,11 @@ Python Expressions
 ~~~~~~~~~~~~~~~~~~
 
 A good rule of thumb is that if you need Python to express your logic,
-you better factor out the code into a script. But Zope is a good tool
-for prototyping and sometimes it would be overkill to write a script
-for one line of code. And looking at existing products you will see
-quite often 'Python expressions', so it's better to know them.
+you better factor out the code into a script (Python function or
+class). But page templates can be used for prototyping and sometimes
+it would be overkill to write a script for one line of code. And
+looking at existing templates you will see quite often 'Python
+expressions', so it's better to know them.
 
 Recall the first example of this section::
 
@@ -209,9 +212,13 @@ Here's another example:
 Inserting Text
 ~~~~~~~~~~~~~~
 
-In the above template, you used the 'tal:content' statement
-on a *bold* tag. When you tested it, Zope replaced the content of the
-HTML *bold* element with the title of the template.
+In the above template, you used the 'tal:content' statement on a
+*bold* tag. When you render it, the template implementation replaced
+the content of the HTML *bold* element with the title of the template.
+
+.. admonition:: Implementation Note
+
+   Not all implementations support titles for templates.
 
 This is easy as long as we want to replace the complete content of an
 HTML element. But what if we want to replace only some words within
@@ -351,10 +358,17 @@ entitled :doc:`AdvZPT`.
 Using the 'tal:condition' statement you can check all kinds of
 conditions. A 'tal:condition' statement leaves the tag and its
 contents in place if its expression has a true value, but removes them
-if the value is false. Zope considers the number zero, a  blank
+if the value is false. Page templates consider the number zero, a  blank
 string, an empty list, and the built-in variable 'nothing' to be false
 values. Nearly every other value is true, including non-zero numbers,
 and strings with anything in them (even spaces!).
+
+.. admonition:: Implementation Note
+
+   In Python, page templates use the standard ``bool`` operator to
+   test conditions. Python objects can override the behaviour of
+   boolean tests by implementing the ``__bool__`` (or ``__nonzero__``
+   on Python 2) method.
 
 Another common use of conditions is to test a sequence to see if it is
 empty before looping over it. For example in the last section you saw
@@ -434,11 +448,11 @@ Creating XML with *Page Templates* is almost exactly like creating HTML.
 You switch to *XML Mode* by setting the *content-type* field to
 'text/xml' or whatever the content-type for your XML should be.
 
-In *XML Mode* no "loose" markup is allowed. Zope assumes that your
-template is well-formed XML. Zope also requires an explicit TAL and METAL
-XML namespace declarations in order to emit XML. For example, if you wish
-to emit XHTML, you might put your namespace declarations on the 'html'
-tag::
+In *XML Mode* no "loose" markup is allowed. Page templates assumes
+that your template is well-formed XML. Page templates also requires an
+explicit TAL and METAL XML namespace declarations in order to
+emit XML. For example, if you wish to emit XHTML, you might put your
+namespace declarations on the 'html' tag::
 
   <html xmlns:tal="http://xml.zope.org/namespaces/tal"
     xmlns:metal="http://xml.zope.org/namespaces/metal">
@@ -447,6 +461,14 @@ To browse the source of an XML template you go to 'source.xml' rather than
 'source.html'.
 
 Debugging and Testing
+---------------------
+
+.. admonition:: Implementation Note
+
+   This section refers specifically to the Zope2/Zope page template
+   implementation. This behaviour is basically shared by
+   :mod:`zope.pagetemplate`; see
+   :class:`zope.pagetemplate.interfaces.IPageTemplateProgram`.
 
 Zope helps you find and correct problems in your *Page Templates*. Zope
 notices problems at two different times: when you're editing a *Page
@@ -568,7 +590,7 @@ macro from another *Page Template*::
   </b>
 
 In this *Page Template*, the 'b' element will be completely replaced by
-the macro when Zope renders the page::
+the macro when the implementation renders the page::
 
   <hr />
   <p>
@@ -627,8 +649,9 @@ get an error, since 'nothing' is not a macro. If you want to use
 'nothing' to conditionally include a macro, you should instead enclose
 the 'metal:use-macro' statement with a 'tal:condition' statement.
 
-Zope handles macros first when rendering your templates. Then Zope
-evaluates TAL expressions. For example, consider this macro::
+ZPT implementations handle macros first when rendering your templates.
+Then the implementation evaluates TAL expressions. For example,
+consider this macro::
 
   <p metal:define-macro="title"
      tal:content="template/title">
