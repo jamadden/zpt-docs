@@ -21,3 +21,5 @@ This document will mention some implementations of page templates.
 * `PHPTAL <https://phptal.org>`_ is an independent implementation in PHP 5.
 * `ZPT-JS <https://www.npmjs.com/package/zpt>`_ is an independent
   implementation in Javascript.
+
+An older list is at :ref:`non-zope-implementations`.

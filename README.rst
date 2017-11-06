@@ -14,5 +14,4 @@ for designers to work with templates in their visual editing tools
 This is the documentation for the page template languages, including
 TAL and METAL.
 
-For detailed documentation on the usage of this package, see
-https://zpt.readthedocs.io
+For detailed documentation, see https://zpt.readthedocs.io
