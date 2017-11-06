@@ -39,7 +39,7 @@ choice for generating unstructured text (like SQL or CSV).
 Page Templates are better (where they apply)
 ============================================
 
-:doc:`../tal`, :doc:`../tales` and :doc:`../metal` are our simplest,
+:doc:`TAL`, :doc:`TALES` and :doc:`METAL` are our simplest,
 most straighforward attempt to design templates for HTML that still
 have enough expressiveness to get the job done. Each of them covers a
 single layer of template functionality in a cleanly extensible
@@ -57,7 +57,7 @@ them. You want to be able to use simple Python expressions. You want
 to be able to write literal strings, and interpolate variables into a
 string. Perhaps at some point you'll discover that there's a whole new
 notation that you would like to be able to use (eg. Perl). These are
-the requirements that produced :doc:`../tales`
+the requirements that produced :doc:`TALES`
 
 Referring to Zope objects by name is one of the clunkier bits of DTML,
 and it is made worse by the "everything in one pile" namespace DTML
@@ -213,7 +213,7 @@ editor, insert the sidebar template so that it appears normally in the
 page, instead of as a little placeholder symbol. When they save it
 back to Zope, convert the sidebar back into a reference.
 
-:doc:`../metal` is the language that allows this sort of behavior. It
+:doc:`METAL` is the language that allows this sort of behavior. It
 is similar to TAL, in that it consists of tag attributes in an XML
 namespace. You can use it to define *macros*, by placing a
 'define-macro="name"' attribute on a tag that you want to re-use.

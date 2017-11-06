@@ -26,6 +26,7 @@ See the METAL specifications for details of what METAL provides:
 
 - :doc:`METALSpecification10` is implemented in Zope 2 and Zope 3.0.
 - :doc:`METALSpecification11` is implemented in Zope 3.1.
+- :doc:`../metal` is the current specification.
 
 Comments
 ========
