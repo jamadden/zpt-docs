@@ -24,7 +24,7 @@ a path, are painful to use.
 
 If you do all of your page design in vi, emacs, or some other
 text-based editor, you're probably content to replace large, arbitrary
-chunks of your page with '<dtml-var foo>'. On the other hand, if you
+chunks of your page with ``<dtml-var foo>``. On the other hand, if you
 use a visual editor or work with someone who does, you've exerienced
 the pain of having to reconcile DTML's dynamicism with the visual
 representation of a page (or page fragment).
@@ -78,20 +78,20 @@ use "ick/name" to get the parrot's "name" property.
 In DTML, sometimes you can use a Python expression in an attribute,
 sometimes you must, and sometimes you can't. Every place that you can
 use a TALES expression, you can use Python. You simply prefix the
-Python expression with "python:", as in "python:2 + 2" or
-"python:string.split(x, '','')".
+Python expression with ``python:``, as in ``python:2 + 2`` or
+``python:string.split(x, '','')``.
 
 Similarly, you can always provide a literal string by using the
-expression type prefix "string:". Thus, "string:This isn't bad" is a
+expression type prefix ``string:``. Thus, ``string:This isn't bad`` is a
 valid TALES expression. You can insert variables values into string
-expressions using "$varname" (or "${varname}") syntax. If variable
-"name" refers to "Evan" and "thing" refers to "cat", then
-"string:$name likes ${thing}s" produces "Evan likes cats".
+expressions using ``$varname`` (or ``${varname}``) syntax. If variable
+``name`` refers to "Evan" and ``thing`` refers to "cat", then
+``string:$name likes ${thing}s`` produces "Evan likes cats".
 
 TALES is designed to be extended by simply defining new expression
 types. If you wanted to use XPath notation, you could write an XPath
 expression engine, register it with TALES, and start writing
-expressions like "xpath:...".
+expressions like ``xpath:...``.
 
 Statements
 ==========
@@ -103,12 +103,12 @@ and from Page Templates to insert the value of an expression::
 
         <p>Ten times X is <b z:insert="python: x * 10">(x * 10)</b></p>
 
-In the DTML version, you use the made-up tag "dtml-var" with an "expr"
+In the DTML version, you use the made-up tag ``dtml-var`` with an ``expr``
 attribute to hold the expression. In the PT version, you add TAL
-attribute "z:replace" to the HTML "b" tag. If you loaded a page
+attribute ``z:replace`` to the HTML ``b`` tag. If you loaded a page
 containing each of these into a WYSIWYG editor, the DTML tag would
 probably not show up, or would be replaced with some kind of icon,
-while the PT version would look like: <b>(x * 10)</b>.
+while the PT version would look like: ``<b>(x * 10)</b>``.
 
 DTML Tags are the statements of the DTML language. They are completely
 independent of the text in which they are embedded, and they don't pay
@@ -124,8 +124,8 @@ Page Templates' TAL statements are attributes of ordinary HTML
 (or XML) tags. This means that you can only use TAL with HTML or XML
 text, but Zope generates a lot of HTML. Most of the popular HTML tools
 ignore and preserve tag attributes that they don't recognize. Since
-TAL attributes have their own XML namespace (a prefix like 'z:' or
-'tal:' that you choose), they don't interfere with the validity of XML
+TAL attributes have their own XML namespace (a prefix like ``z:`` or
+``tal:`` that you choose), they don't interfere with the validity of XML
 documents. Thus, HTML or XML that you have marked up with TAL is
 likely to be perfectly compatible with tools that know nothing about
 Zope.
@@ -134,8 +134,8 @@ Write an HTML document as XHTML, or at least very tidily, and it has a
 nice easy-to-parse tree structure. This allows us to frame template
 operations in terms of repeating, replacing, removing, or changing
 attributes of tags. You can handle almost all cases where this model
-doesn't fit the dynamicism of your document by adding the odd '<span>'
-or '<div>', just as you might when applying CSS classes.
+doesn't fit the dynamicism of your document by adding the odd ``<span>``
+or ``<div>``, just as you might when applying CSS classes.
 
 Variables and Scoping
 =====================
@@ -150,63 +150,63 @@ any name in the namespace is bound to what it expected to find.
 Page Templates solve this, by providing your TALES expressions with
 a set of builtin variables. If there is an object named 'helper' in
 the same container as your template, you can reliably access it as
-'container/helper'.
+``container/helper``.
 
 You can define your own global or local variables with the
-'define="var expr"' statement. Local variables are like the names
-bound by a '<dtml-let>'; Their scope is the statement tag and its
-content. Global variables are more like 'REQUEST.set' names, since
+``define="var expr"`` statement. Local variables are like the names
+bound by a ``<dtml-let>``; Their scope is the statement tag and its
+content. Global variables are more like ``REQUEST.set`` names, since
 they are in scope from the start of the statement tag to the end of
 the template.
 
 Template Operations
 ===================
 
-Just as '<dtml-var foo>' is the most fundamental statement of DTML,
-'replace="expr"' and 'content="expr"' are the basic workhorses of
+Just as ``<dtml-var foo>`` is the most fundamental statement of DTML,
+``replace="expr"`` and ``content="expr"`` are the basic workhorses of
 TAL. The first replaces the tag on which you place it with the value
 of the expression "expr", while the other inserts the value in place
 of the tag's contents. As you saw above, the TALES expression "expr"
 can evaluate to any Zope object, string, or Python-computed value.
 
 You can write comments that don't show up in a rendered page, or
-comment out part of a page, by putting 'replace="nothing"' on a tag.
+comment out part of a page, by putting ``replace="nothing"`` on a tag.
 TAL inside of the tag will not be executed.
 
 Rather than replacing an entire tag, you can set tag attributes with
-'attributes="attrname expr"'. This allows you to have reasonable dummy
+``attributes="attrname expr"``. This allows you to have reasonable dummy
 values for the attributes that a WYSIWYG editor can deal with. For
 example::
 
         <textarea name="fred" rows="10" cols="60"
           z:attributes="rows request/my_rows; cols request/my_cols">
 
-Instead of '<dtml-in>', TAL uses 'repeat="var expr"'. This repeats the
+Instead of ``<dtml-in>``, TAL uses ``repeat="var expr"``. This repeats the
 tag on which you place it once for each element of the sequence
 "expr". In each repetition, the local variable "var" is bound to the
 current element of the sequence, and repeat variable "var" gives you
-access to the TAL equivalent of 'sequence-number'. For example::
+access to the TAL equivalent of ``sequence-number``. For example::
 
         <p z:repeat="thing here/collection">
           Paragraph #<span z:replace="repeat/thing/number">1</span>:
           <span z:replace="thing">something</span>.
         </p>
 
-The 'condition="expr"' statement is similar to '<dtml-if>', but more
+The ``condition="expr"`` statement is similar to ``<dtml-if>``, but more
 basic. If the expression is true, the statement does nothing. If the
 expression is false, the tag and its contents is skipped. There is no
-equivalent to '<dtml-else>' or '<dtml-elif>'.
+equivalent to ``<dtml-else>`` or ``<dtml-elif>``.
 
 The Macros Saga
 ===============
 
-There are times when the power of '<dtml-var>' can be a problem. You
-can't tell, just by inspecting DTML source, whether '<dtml-var x>'
+There are times when the power of ``<dtml-var>`` can be a problem. You
+can't tell, just by inspecting DTML source, whether ``<dtml-var x>``
 inserts a string, performs a catalog search, sends mail, or even
 restarts Zope! Templates often include other templates, or parts of
 them, and it can be useful to know when that is only thing happening.
 
-If you have some way to tell that '<dtml-var sidebar>' inserts a
+If you have some way to tell that ``<dtml-var sidebar>`` inserts a
 sidebar template, then you can solve the problem faced by designers
 who use WYSIWYG tools. When they load a template page into their
 editor, insert the sidebar template so that it appears normally in the
@@ -216,7 +216,7 @@ back to Zope, convert the sidebar back into a reference.
 :doc:`METAL` is the language that allows this sort of behavior. It
 is similar to TAL, in that it consists of tag attributes in an XML
 namespace. You can use it to define *macros*, by placing a
-'define-macro="name"' attribute on a tag that you want to re-use.
+``define-macro="name"`` attribute on a tag that you want to re-use.
 METAL affects template rendering, of course, inserting any macros
 that the template uses just before TAL executes, it *also* inserts
 macros whenever you get the source code for the template. You can
@@ -225,26 +225,26 @@ yet still see *everything* in a page when you edit it.
 
 Macros can only be changed by editing the definition. If you load a
 template into an editor, and change a tag that has a
-'use-macro="expr"' attribute, these changes will have no effect.
+``use-macro="expr"`` attribute, these changes will have no effect.
 
 Only whole tags can be macros, so you can't make a
-'standard_html_header' and 'standard_html_footer' macro. Instead, you
-would create a 'standard_page' template, make the entire 'html' tag a
-macro, and place a 'define-slot="main"' METAL attribute on the
-'body' tag. Slots are tags within a macro that can be replaced when
-the macro is inserted. They are replaced if the 'use-macro' statement
-tag contains a 'fill-slot="name"' statement tag, where 'name' matches
-the name of a slot in the macro. To use your 'standard_page' template,
-you place 'use-macro="here/standard_page/macros/page"' on your page's
-'html' tag, and 'fill-slot="main"' on its 'body' tag. Now the 'html'
+``standard_html_header`` and ``standard_html_footer`` macro. Instead, you
+would create a ``standard_page`` template, make the entire ``html`` tag a
+macro, and place a ``define-slot="main"`` METAL attribute on the
+``body`` tag. Slots are tags within a macro that can be replaced when
+the macro is inserted. They are replaced if the ``use-macro`` statement
+tag contains a ``fill-slot="name"`` statement tag, where ``name`` matches
+the name of a slot in the macro. To use your ``standard_page`` template,
+you place ``use-macro="here/standard_page/macros/page"`` on your page's
+``html`` tag, and ``fill-slot="main"`` on its ``body`` tag. Now the ``html``
 tag and all of its contents *other than* the body tag will be replaced
 with the macro body. To see what this looks like, check out the
-[Examples].
+:doc:`Examples`.
 
 
 
 Comments
---------
+========
 
 
 peterbe (May 10, 2001 5:09 am; Comment #2)  --
