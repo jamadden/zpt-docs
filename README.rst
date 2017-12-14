@@ -2,7 +2,7 @@
  Page Templates
 ================
 .. image:: https://readthedocs.org/projects/zpt/badge/?version=latest
-        :target: https://zpt.readthedocs.org/en/latest/
+        :target: https://pagetemplates.readthedocs.io/en/latest/
         :alt: Documentation Status
 
 
@@ -14,4 +14,4 @@ for designers to work with templates in their visual editing tools
 This is the documentation for the page template languages, including
 TAL and METAL.
 
-For detailed documentation, see https://zpt.readthedocs.io
+For detailed documentation, see https://pagetemplates.readthedocs.io
